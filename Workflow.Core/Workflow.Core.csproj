@@ -1,0 +1,31 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>netstandard2.0</TargetFramework>
+    <RepositoryUrl>https://github.com/DevelApp-dk/Workflow.Core</RepositoryUrl>
+    <Version>1.0.8</Version>
+    <Copyright>Copyright © DevelApp 2020</Copyright>
+    <PackageLicenseFile>LICENSE</PackageLicenseFile>
+    <Company>DevelApp Denmark (CVR 33211740)</Company>
+    <Authors>Lars Shakya Buch-Jepsen</Authors>
+    <PackageId>DevelApp.Workflow.Core</PackageId>
+    <Product>DevelApp.Workflow.Core</Product>
+    <Description>Interfaces for DevelApp.Workflow which is an oppinionated Workflow for Akka.Net making it easy to handle workflows</Description>
+    <AssemblyName>DevelApp.Workflow.Core</AssemblyName>
+    <RootNamespace>DevelApp.Workflow.Core</RootNamespace>
+    <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="DevelApp.RuntimePluggableClassFactory.Interface" Version="1.0.2" />
+    <PackageReference Include="Manatee.Json" Version="13.0.3" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Include="..\LICENSE">
+      <Pack>True</Pack>
+      <PackagePath></PackagePath>
+    </None>
+  </ItemGroup>
+
+</Project>
