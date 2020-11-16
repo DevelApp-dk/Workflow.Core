@@ -37,6 +37,12 @@ namespace DevelApp.Workflow.Core.Model
 
         }
 
+        public static implicit operator VersionNumber(long rhs)
+        {
+            return new VersionNumber((int)rhs);
+
+        }
+
         public static implicit operator int(VersionNumber rhs)
         {
             return rhs.GetVersionNumber;
