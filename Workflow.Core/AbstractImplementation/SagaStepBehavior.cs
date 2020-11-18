@@ -1,4 +1,5 @@
 ﻿using DevelApp.RuntimePluggableClassFactory.Interface;
+using DevelApp.Workflow.Core.Model;
 using Manatee.Json;
 using Manatee.Json.Schema;
 using System;
@@ -8,18 +9,42 @@ using System.Text;
 namespace DevelApp.Workflow.Core.AbstractImplementation
 {
     /// <summary>
-    /// Placement of utility functions for all SagaStepBehaviors
+    /// Placement of utility functions for all SagaStepBehaviors. Do not inherit from this
     /// </summary>
-    public abstract class AbstractSagaStepBehavior
+    public abstract class SagaStepBehavior:ISagaStepBehavior
     {
         /// <summary>
-        /// Returns the specific name of the sagastep behavior
+        /// ModuleKey for the owning module
+        /// </summary>
+        public abstract KeyString ModuleKey { get; }
+
+        /// <summary>
+        /// ModuleKey for the owning workflow if any
+        /// </summary>
+        public abstract KeyString WorkflowKey { get; }
+
+        /// <summary>
+        /// Returns the specific name of the sagastep behavior without Behavior or SagaStepBehavior as they are implied
+        /// </summary>
+        public string LocalName
+        {
+            get
+            {
+                return GetType().Name.Replace("SagaStepBehavior", "").Replace("Behavior", "");
+            }
+        }
+
+        /// <summary>
+        /// Returns the qualified name without version number
         /// </summary>
         public string Name
         {
             get
             {
-                return GetType().FullName;
+                return string.Format("{0}{1}.{2}"
+                    , ModuleKey
+                    , string.IsNullOrWhiteSpace(WorkflowKey) ? "" : "." + WorkflowKey
+                    , LocalName);
             }
         }
 
@@ -34,32 +59,10 @@ namespace DevelApp.Workflow.Core.AbstractImplementation
         public abstract int Version { get; }
 
         /// <summary>
-        /// SagaStep is gathering data for the SagaStep
-        /// </summary>
-        /// <param name="sagaStep"></param>
-        /// <returns></returns>
-        public abstract bool Initiate(ISagaStep sagaStep);
-
-        /// <summary>
-        /// Evaluates the gathered data and decides on an outcome 
-        /// </summary>
-        /// <param name="sagaStep"></param>
-        /// <returns></returns>
-        public abstract bool Evaluate(ISagaStep sagaStep);
-
-        /// <summary>
         /// Returns the JsonSchema for the configuration
         /// </summary>
         /// <returns></returns>
         public abstract JsonSchema GetConfigurationJsonSchema();
-
-        /// <summary>
-        /// Called on errors in one of the behavior steps returns false if error could not be resolved
-        /// </summary>
-        /// <param name="sagaStep"></param>
-        /// <returns></returns>
-
-        public abstract bool Error(ISagaStep sagaStep);
 
         /// <summary>
         /// Sets the behavior configuration
@@ -77,8 +80,21 @@ namespace DevelApp.Workflow.Core.AbstractImplementation
         }
 
         /// <summary>
+        /// Executes the behavior
+        /// </summary>
+        /// <param name="sagaStep"></param>
+        /// <param name="workflowMessage"></param>
+        /// <returns></returns>
+        public abstract IWorkflowMessage Execute(ISagaStep sagaStep, IWorkflowMessage workflowMessage);
+
+        /// <summary>
         /// The validated behaviorfor the SagaStepBehavior
         /// </summary>
         protected JsonValue BehaviorConfiguration { get; private set; }
+
+        /// <summary>
+        /// Returns the behaviorType
+        /// </summary>
+        public abstract SagaStepBehaviorType BehaviorType { get; }
     }
 }

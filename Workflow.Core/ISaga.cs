@@ -9,12 +9,6 @@ namespace DevelApp.Workflow.Core
     public interface ISaga
     {
         /// <summary>
-        /// Returns the Saga version
-        /// </summary>
-        /// <returns></returns>
-        VersionString SagaVersion { get; }
-
-        /// <summary>
         /// Returns the first SagaStep of the Saga
         /// </summary>
         /// <returns></returns>
