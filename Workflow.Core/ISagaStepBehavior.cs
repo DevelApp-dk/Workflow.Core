@@ -1,4 +1,5 @@
 ﻿using DevelApp.RuntimePluggableClassFactory.Interface;
+using DevelApp.Workflow.Core.Model;
 using Manatee.Json;
 using System;
 using System.Collections.Generic;
@@ -24,24 +25,20 @@ namespace DevelApp.Workflow.Core
         SagaStepBehaviorType BehaviorType { get; }
 
         /// <summary>
-        /// SagaStep is gathering data for the SagaStep
+        /// Actual execution of behavior
         /// </summary>
         /// <param name="sagaStep"></param>
         /// <returns></returns>
-        bool Initiate(ISagaStep sagaStep);
+        IWorkflowMessage Execute(ISagaStep sagaStep, IWorkflowMessage workflowMessage);
 
         /// <summary>
-        /// Evaluates the gathered data and decides on an outcome 
+        /// ModuleKey for the owning module
         /// </summary>
-        /// <param name="sagaStep"></param>
-        /// <returns></returns>
-        bool Evaluate(ISagaStep sagaStep);
+        KeyString ModuleKey { get; }
 
         /// <summary>
-        /// Called on errors in one of the behavior steps returns false if error could not be resolved
+        /// ModuleKey for the owning workflow if any
         /// </summary>
-        /// <param name="sagaStep"></param>
-        /// <returns></returns>
-        bool Error(ISagaStep sagaStep);
+        KeyString WorkflowKey { get; }
     }
 }
