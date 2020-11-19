@@ -2,12 +2,13 @@
 using System.Collections.Generic;
 using System.Text;
 
-namespace DevelApp.Workflow.Core.AbstractImplementation
+namespace DevelApp.Workflow.Core.AbstractBehaviors
+
 {
     /// <summary>
-    /// Starts subworkflows that are automatically used for progressing when finished.
+    /// Get data to self. Typically as a part of automatic execution
     /// </summary>
-    public abstract class StartSubWorkflowsSagaStepBehavior:SagaStepBehavior
+    public abstract class GetDataToSelfSagaStepBehavior:SagaStepBehavior
     {
         /// <summary>
         /// Returns the behaviorType
@@ -16,7 +17,7 @@ namespace DevelApp.Workflow.Core.AbstractImplementation
         {
             get
             {
-                return SagaStepBehaviorType.StartSubWorkflows;
+                return SagaStepBehaviorType.GetDataToSelf;
             }
         }
     }
