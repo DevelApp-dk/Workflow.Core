@@ -5,14 +5,21 @@ using Akka.Event;
 using Akka.Monitoring;
 using Akka.Persistence;
 using DevelApp.Workflow.Core;
+using DevelApp.Workflow.Core.Messages;
 using DevelApp.Workflow.Core.Model;
 
 namespace DevelApp.Workflow.Core.AbstractActors
 {
-    public abstract class AbstractPersistedWorkflowActor<IndividualItem, Collection> : ReceivePersistentActor where Collection : class, new()
+    /// <summary>
+    /// Used as a base class for persisted actors with automatic restore of individual items typically messages 
+    /// and a actor state (which can be a class or a collection based on the individual items)
+    /// </summary>
+    /// <typeparam name="IndividualItem"></typeparam>
+    /// <typeparam name="ActorState"></typeparam>
+    public abstract class AbstractPersistedWorkflowActor<IndividualItem, ActorState> : ReceivePersistentActor where ActorState : class, new()
     {
         protected readonly ILoggingAdapter Logger = Logging.GetLogger(Context);
-        protected Collection PersistedCollection;
+        protected ActorState State;
 
         public AbstractPersistedWorkflowActor(int actorInstance = 1, int snapshotPerVersion = 100)
         {
@@ -20,7 +27,7 @@ namespace DevelApp.Workflow.Core.AbstractActors
 
             _snapshotPerVersion = snapshotPerVersion;
 
-            PersistedCollection = new Collection();
+            State = new ActorState();
 
             //Recover
             Recover<IndividualItem>(data => {
@@ -30,12 +37,12 @@ namespace DevelApp.Workflow.Core.AbstractActors
 
             Recover<SnapshotOffer>(offer => {
                 Logger.Debug("{0} offered snapshot", ActorId);
-                Collection data = offer.Snapshot as Collection;
+                ActorState data = offer.Snapshot as ActorState;
                 RecoverPersistedSnapshotWorkflowDataHandler(data);
             });
 
             //Commands (like Receive)
-            Command<IWorkflowMessage>(message => {
+            Command<WorkflowMessage>(message => {
                 Context.IncrementMessagesReceived();
                 Logger.Debug("{0} received message {1}", ActorId, message.ToString());
                 WorkflowMessageHandler(message);
@@ -137,7 +144,7 @@ namespace DevelApp.Workflow.Core.AbstractActors
         /// Handle incoming Workflow Messages
         /// </summary>
         /// <param name="message"></param>
-        protected abstract void WorkflowMessageHandler(IWorkflowMessage message);
+        protected abstract void WorkflowMessageHandler(WorkflowMessage message);
 
         #endregion
 
@@ -189,7 +196,7 @@ namespace DevelApp.Workflow.Core.AbstractActors
         {
             if (_snapshotPerVersion <= 1)
             {
-                SaveSnapshot(PersistedCollection);
+                SaveSnapshot(State);
             }
             else
             {
@@ -198,7 +205,7 @@ namespace DevelApp.Workflow.Core.AbstractActors
                     if (++_persistsSinceLastSnapshot % _snapshotPerVersion == 0)
                     {
                         //time to save a snapshot
-                        SaveSnapshot(PersistedCollection);
+                        SaveSnapshot(State);
                     }
                 });
             }
@@ -215,9 +222,9 @@ namespace DevelApp.Workflow.Core.AbstractActors
         /// Snapshot is offered to start Recover process
         /// </summary>
         /// <param name="data"></param>
-        private void RecoverPersistedSnapshotWorkflowDataHandler(Collection persistedCollection)
+        private void RecoverPersistedSnapshotWorkflowDataHandler(ActorState persistedCollection)
         {
-            PersistedCollection = persistedCollection;
+            State = persistedCollection;
         }
 
         #endregion

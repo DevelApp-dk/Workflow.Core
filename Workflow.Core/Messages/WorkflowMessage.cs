@@ -3,15 +3,16 @@ using System.Collections.Generic;
 using System.Text;
 using Akka.Actor;
 using DevelApp.Workflow.Core;
+using DevelApp.Workflow.Core.Model;
 
 namespace DevelApp.Workflow.Core.Messages
 {
     /// <summary>
     /// Used as envelope for many dynamic message types used in Workflow
     /// </summary>
-    public class WorkflowMessage<T> : IWorkflowMessage
+    public class WorkflowMessage: IWorkflowMessage
     {
-        public WorkflowMessage(string messageTypeName, T data, ActorPath originalSender = default)
+        public WorkflowMessage(string messageTypeName, JsonDataString data, ActorPath originalSender = default)
         {
             MessageTypeName = messageTypeName;
             Data = data;
@@ -33,20 +34,9 @@ namespace DevelApp.Workflow.Core.Messages
         public DateTime MessageCreationTime { get; }
 
         /// <summary>
-        /// Returns type of generic payload
-        /// </summary>
-        public Type DataType
-        {
-            get
-            {
-                return typeof(T);
-            }
-        }
-
-        /// <summary>
         /// Dynamic data for Message
         /// </summary>
-        public T Data { get; }
+        public JsonDataString Data { get; }
 
         /// <summary>
         /// Can contain the original sender of the message
@@ -56,48 +46,81 @@ namespace DevelApp.Workflow.Core.Messages
         /// <summary>
         /// Returns a instance of a failed message
         /// </summary>
-        public WorkflowFailedMessage<T> GetWorkflowFailedMessage(string errorMessage = null, Exception ex = null)
+        public WorkflowFailedMessage GetWorkflowFailedMessage(ActorPath reportingActor, string errorMessage = null, Exception ex = null)
         {
-            return new WorkflowFailedMessage<T>(this, errorMessage, ex);
+            return new WorkflowFailedMessage(this, reportingActor, ex, errorMessage);
         }
 
         /// <summary>
         /// Returns a instance of an unhandled message
         /// </summary>
-        public WorkflowUnhandledMessage<T> GetWorkflowUnhandledMessage(string unhandledExplanation, ActorPath replyingReceiver)
+        public WorkflowUnhandledMessage GetWorkflowUnhandledMessage(string unhandledExplanation, ActorPath replyingReceiver)
         {
-            return new WorkflowUnhandledMessage<T>(this, unhandledExplanation, replyingReceiver);
+            return new WorkflowUnhandledMessage(this, unhandledExplanation, replyingReceiver);
         }
     }
 
-    public class WorkflowFailedMessage<V> :IWorkflowFailedMessage
+    public class WorkflowFailedMessage: IWorkflowMessage
     {
-        internal WorkflowFailedMessage(WorkflowMessage<V> workflowMessage, string errorMessage) : this(sagaMessage, null, errorMessage)
+        internal WorkflowFailedMessage(WorkflowMessage workflowMessage, ActorPath reportingActor, Exception ex, string errorMessage)
         {
-        }
-
-        internal WorkflowFailedMessage(WorkflowMessage<V> workflowMessage, Exception ex errorMessage) : this(sagaMessage, ex, null)
-        {
-        }
-
-        internal WorkflowFailedMessage(WorkflowMessage<V> workflowMessage, Exception ex, string errorMessage)
-        {
-            SagaKey = (string)sagaMessage.SagaKey;
+            MessageTypeName = workflowMessage.MessageTypeName;
+            Data = workflowMessage.Data;
+            OriginalSender = workflowMessage.OriginalSender;
+            OriginalMessageCreationTime = workflowMessage.MessageCreationTime;
+            MessageCreationTime = DateTime.UtcNow;
+            ReportingActor = reportingActor;
             ErrorMessage = errorMessage;
             Exception = ex;
         }
 
-        public KeyString SagaKey { get; }
+        /// <summary>
+        /// The reported error message if reported
+        /// </summary>
         public string ErrorMessage { get; }
+
+        /// <summary>
+        /// The thrown exception if reported
+        /// </summary>
         public Exception Exception { get; }
+
+        /// <summary>
+        /// MessageTypeName is used to distinguish what the message is about
+        /// </summary>
+        public string MessageTypeName { get; }
+
+        /// <summary>
+        /// Time of message creation in UTC time
+        /// </summary>
+        public DateTime MessageCreationTime { get; }
+
+        /// <summary>
+        /// Time of message creation in UTC time
+        /// </summary>
+        public DateTime OriginalMessageCreationTime { get; }
+
+        /// <summary>
+        /// Dynamic data for Message
+        /// </summary>
+        public JsonDataString Data { get; }
+
+        /// <summary>
+        /// Can contain the reporting actor of the error
+        /// </summary>
+        public ActorPath ReportingActor { get; }
+
+        /// <summary>
+        /// Can contain the original sender of the message
+        /// </summary>
+        public ActorPath OriginalSender { get; }
     }
 
     /// <summary>
     /// Used as envelope for many dynamic message types used in Workflow
     /// </summary>
-    public class WorkflowUnhandledMessage<U> : IWorkflowUnhandledMessage
+    public class WorkflowUnhandledMessage: IWorkflowMessage
     {
-        internal WorkflowUnhandledMessage(WorkflowMessage<U> workflowMessage, string unhandledExplanation, ActorPath replyingReceiver)
+        internal WorkflowUnhandledMessage(WorkflowMessage workflowMessage, string unhandledExplanation, ActorPath replyingReceiver)
         {
             UnhandledExplanation = unhandledExplanation;
             MessageTypeName = workflowMessage.MessageTypeName;
@@ -124,23 +147,12 @@ namespace DevelApp.Workflow.Core.Messages
         public DateTime OriginalMessageCreationTime { get; }
 
         /// <summary>
-        /// Returns type of generic payload
-        /// </summary>
-        public Type DataType
-        {
-            get
-            {
-                return typeof(U);
-            }
-        }
-
-        /// <summary>
         /// Dynamic data for Message
         /// </summary>
-        public U Data { get; }
+        public JsonDataString Data { get; }
 
         /// <summary>
-        /// Can contain the original sender of the message
+        /// Can contain the replying receiver of the message
         /// </summary>
         public ActorPath ReplyingReceiver { get; }
 

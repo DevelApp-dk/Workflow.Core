@@ -5,6 +5,7 @@ using Akka.Actor;
 using Akka.Event;
 using Akka.Monitoring;
 using Akka.Pattern;
+using DevelApp.Workflow.Core.Messages;
 using DevelApp.Workflow.Core.Model;
 
 namespace DevelApp.Workflow.Core.AbstractActors
@@ -12,16 +13,31 @@ namespace DevelApp.Workflow.Core.AbstractActors
     public abstract class AbstractExternalWorkflowActor : ReceiveActor
     {
         protected readonly ILoggingAdapter Logger = Logging.GetLogger(Context);
+        protected readonly int _circuitBrakerMaxFailures;
+        protected readonly TimeSpan _circuitBrakerCallTimeout;
+        protected readonly TimeSpan _circuitBrakerResetTimeout;
 
         public AbstractExternalWorkflowActor(int actorInstance = 1, int circuitBrakerMaxFailures = 5
-            , TimeSpan circuitBrakerCallTimeout = default, TimeSpan cirkuitBrakerResetTimeout = default)
+            , TimeSpan circuitBrakerCallTimeout = default, TimeSpan circuitBrakerResetTimeout = default)
         {
             ActorInstance = actorInstance;
-
-            maxFailures: 5,
-                callTimeout: TimeSpan.FromSeconds(10),
-                resetTimeout: TimeSpan.FromMinutes(1));
-
+            _circuitBrakerMaxFailures = circuitBrakerMaxFailures;
+            if (circuitBrakerCallTimeout == default)
+            {
+                _circuitBrakerCallTimeout = TimeSpan.FromSeconds(10);
+            }
+            else
+            {
+                _circuitBrakerCallTimeout = circuitBrakerCallTimeout;
+            }
+            if (circuitBrakerResetTimeout == default)
+            {
+                _circuitBrakerResetTimeout = TimeSpan.FromMinutes(1);
+            }
+            else
+            {
+                _circuitBrakerResetTimeout = circuitBrakerResetTimeout;
+            }
 
             Receive<DeadletterHandlingMessage>(message =>
             {
@@ -98,9 +114,9 @@ namespace DevelApp.Workflow.Core.AbstractActors
         protected virtual CircuitBreaker CreateCircuitBreaker()
         {
             return new CircuitBreaker(
-                maxFailures: 5,
-                callTimeout: TimeSpan.FromSeconds(10),
-                resetTimeout: TimeSpan.FromMinutes(1));
+                maxFailures: _circuitBrakerMaxFailures,
+                callTimeout: _circuitBrakerCallTimeout,
+                resetTimeout: _circuitBrakerResetTimeout);
         }
 
         /// <summary>

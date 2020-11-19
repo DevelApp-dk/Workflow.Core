@@ -18,8 +18,10 @@
 
   <ItemGroup>
     <PackageReference Include="Akka" Version="1.4.10" />
+    <PackageReference Include="akka.monitoring" Version="1.1.0" />
     <PackageReference Include="DevelApp.RuntimePluggableClassFactory.Interface" Version="1.0.2" />
     <PackageReference Include="Manatee.Json" Version="13.0.3" />
+    <PackageReference Include="Akka.Persistence" Version="1.4.10" />
   </ItemGroup>
 
   <ItemGroup>

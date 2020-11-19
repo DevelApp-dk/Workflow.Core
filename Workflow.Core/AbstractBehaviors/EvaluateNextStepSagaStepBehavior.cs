@@ -2,12 +2,12 @@
 using System.Collections.Generic;
 using System.Text;
 
-namespace DevelApp.Workflow.Core.AbstractImplementation
+namespace DevelApp.Workflow.Core.AbstractBehaviors
 {
     /// <summary>
-    /// Get data to self. Typically as a part of automatic execution
+    /// Behavior evaluates the data and the next step
     /// </summary>
-    public abstract class GetDataToSelfSagaStepBehavior:SagaStepBehavior
+    public abstract class EvaluateNextStepSagaStepBehavior:SagaStepBehavior
     {
         /// <summary>
         /// Returns the behaviorType
@@ -16,7 +16,7 @@ namespace DevelApp.Workflow.Core.AbstractImplementation
         {
             get
             {
-                return SagaStepBehaviorType.GetDataToSelf;
+                return SagaStepBehaviorType.EvaluateNextStep;
             }
         }
     }

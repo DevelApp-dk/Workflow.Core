@@ -1,6 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
+﻿using Akka.Actor;
+using Akka.Event;
+using Akka.Monitoring;
+using DevelApp.Workflow.Core.Messages;
+using DevelApp.Workflow.Core.Model;
 
 namespace DevelApp.Workflow.Core.AbstractActors
 {
@@ -12,7 +14,7 @@ namespace DevelApp.Workflow.Core.AbstractActors
         {
             ActorInstance = actorInstance;
 
-            Receive<IWorkflowMessage>(message => {
+            Receive<WorkflowMessage>(message => {
                 Context.IncrementMessagesReceived();
                 Logger.Debug("{0} received message {1}", ActorId, message.ToString());
                 WorkflowMessageHandler(message);
@@ -68,7 +70,7 @@ namespace DevelApp.Workflow.Core.AbstractActors
         /// Handle incoming Workflow Messages
         /// </summary>
         /// <param name="message"></param>
-        protected abstract void WorkflowMessageHandler(IWorkflowMessage message);
+        protected abstract void WorkflowMessageHandler(WorkflowMessage message);
 
         /// <summary>
         /// Handles DeadletterHandlingMessage. Default is to log and ignore

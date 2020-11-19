@@ -2,12 +2,12 @@
 using System.Collections.Generic;
 using System.Text;
 
-namespace DevelApp.Workflow.Core.AbstractImplementation
+namespace DevelApp.Workflow.Core.AbstractBehaviors
 {
     /// <summary>
-    /// Get data to use for later execution of a message for something
+    /// Get data to sender sends lookup data to sender
     /// </summary>
-    public abstract class GetDataToScheduleSagaStepBehavior:SagaStepBehavior
+    public abstract class GetDataToSenderSagaStepBehavior:SagaStepBehavior
     {
         /// <summary>
         /// Returns the behaviorType
@@ -16,7 +16,7 @@ namespace DevelApp.Workflow.Core.AbstractImplementation
         {
             get
             {
-                return SagaStepBehaviorType.GetDataToSchedule;
+                return SagaStepBehaviorType.GetDataToSender;
             }
         }
     }

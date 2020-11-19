@@ -1,4 +1,5 @@
 ﻿using DevelApp.RuntimePluggableClassFactory.Interface;
+using DevelApp.Workflow.Core.Messages;
 using DevelApp.Workflow.Core.Model;
 using Manatee.Json;
 using System;
@@ -29,7 +30,7 @@ namespace DevelApp.Workflow.Core
         /// </summary>
         /// <param name="sagaStep"></param>
         /// <returns></returns>
-        IWorkflowMessage Execute(ISagaStep sagaStep, IWorkflowMessage workflowMessage);
+        IWorkflowMessage Execute(ISagaStep sagaStep, WorkflowMessage workflowMessage);
 
         /// <summary>
         /// ModuleKey for the owning module
