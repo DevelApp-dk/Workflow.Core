@@ -2,12 +2,12 @@
 using System.Collections.Generic;
 using System.Text;
 
-namespace DevelApp.Workflow.Core.AbstractImplementation
+namespace DevelApp.Workflow.Core.AbstractBehaviors
 {
     /// <summary>
-    /// Get data to sender sends lookup data to sender
+    /// Starts subworkflows that are automatically used for progressing when finished.
     /// </summary>
-    public abstract class GetDataToSenderSagaStepBehavior:SagaStepBehavior
+    public abstract class StartSubWorkflowsSagaStepBehavior:SagaStepBehavior
     {
         /// <summary>
         /// Returns the behaviorType
@@ -16,7 +16,7 @@ namespace DevelApp.Workflow.Core.AbstractImplementation
         {
             get
             {
-                return SagaStepBehaviorType.GetDataToSender;
+                return SagaStepBehaviorType.StartSubWorkflows;
             }
         }
     }

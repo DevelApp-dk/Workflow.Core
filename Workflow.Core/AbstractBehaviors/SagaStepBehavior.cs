@@ -1,4 +1,5 @@
 ﻿using DevelApp.RuntimePluggableClassFactory.Interface;
+using DevelApp.Workflow.Core.Messages;
 using DevelApp.Workflow.Core.Model;
 using Manatee.Json;
 using Manatee.Json.Schema;
@@ -6,7 +7,7 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 
-namespace DevelApp.Workflow.Core.AbstractImplementation
+namespace DevelApp.Workflow.Core.AbstractBehaviors
 {
     /// <summary>
     /// Placement of utility functions for all SagaStepBehaviors. Do not inherit from this
@@ -85,7 +86,7 @@ namespace DevelApp.Workflow.Core.AbstractImplementation
         /// <param name="sagaStep"></param>
         /// <param name="workflowMessage"></param>
         /// <returns></returns>
-        public abstract IWorkflowMessage Execute(ISagaStep sagaStep, IWorkflowMessage workflowMessage);
+        public abstract IWorkflowMessage Execute(ISagaStep sagaStep, WorkflowMessage workflowMessage);
 
         /// <summary>
         /// The validated behaviorfor the SagaStepBehavior
