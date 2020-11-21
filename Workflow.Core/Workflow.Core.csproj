@@ -3,7 +3,7 @@
   <PropertyGroup>
     <TargetFramework>netstandard2.0</TargetFramework>
     <RepositoryUrl>https://github.com/DevelApp-dk/Workflow.Core</RepositoryUrl>
-    <Version>1.1.1</Version>
+    <Version>1.1.2</Version>
     <Copyright>Copyright © DevelApp 2020</Copyright>
     <PackageLicenseFile>LICENSE</PackageLicenseFile>
     <Company>DevelApp Denmark (CVR 33211740)</Company>
@@ -13,7 +13,9 @@
     <Description>Interfaces for DevelApp.Workflow which is an oppinionated Workflow for Akka.Net making it easy to handle workflows</Description>
     <AssemblyName>DevelApp.Workflow.Core</AssemblyName>
     <RootNamespace>DevelApp.Workflow.Core</RootNamespace>
-    <GeneratePackageOnBuild>false</GeneratePackageOnBuild>
+    <IncludeSymbols>true</IncludeSymbols>
+    <SymbolPackageFormat>snupkg</SymbolPackageFormat>
+    <RepositoryType>Git</RepositoryType>
   </PropertyGroup>
 
   <ItemGroup>
