@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Text;
+using Akka.Actor;
 using Akka.Event;
 using Akka.Monitoring;
 using Akka.Persistence;
@@ -42,10 +44,22 @@ namespace DevelApp.Workflow.Core.AbstractActors
             });
 
             //Commands (like Receive)
-            Command<WorkflowMessage>(message => {
+            Command<IWorkflowMessage>(message => {
                 Context.IncrementMessagesReceived();
                 Logger.Debug("{0} received message {1}", ActorId, message.ToString());
-                WorkflowMessageHandler(message);
+                bool notHandled = true;
+                if(message.IsReply || message.IsTimeout)
+                {
+                    notHandled = HandleMessageReplies(message);
+                }
+                if (notHandled)
+                {
+                    WorkflowMessageHandler(message);
+                }
+            });
+
+            Command<GroupFinishedMessage>(message => {
+                GroupFinishedMessageHandler(message);
             });
 
             Command<SaveSnapshotSuccess>(success => {
@@ -80,6 +94,12 @@ namespace DevelApp.Workflow.Core.AbstractActors
                 DeadletterHandlingMessageHandler(message);
             });
         }
+
+        /// <summary>
+        /// When telling a group of messages this is where you handle replies whne more than one or messages has timed out
+        /// </summary>
+        /// <param name="message"></param>
+        protected abstract void GroupFinishedMessageHandler(GroupFinishedMessage message);
 
         /// <summary>
         /// Returns the unique actor id
@@ -140,11 +160,55 @@ namespace DevelApp.Workflow.Core.AbstractActors
 
         #region Message handling
 
+        Dictionary<Guid, Dictionary<Guid, IMessage>> expectedReplies = new Dictionary<Guid, Dictionary<Guid, IMessage>>();
+
+        /// <summary>
+        /// Handles reply messages
+        /// </summary>
+        /// <param name="message"></param>
+        /// <returns></returns>
+        private bool HandleMessageReplies(IMessage message)
+        {
+            if (message.IsTimeout)
+            {
+                if (expectedReplies.TryGetValue(message.TransactionGroupId, out Dictionary<Guid, IMessage> transactionGroup))
+                {
+                    expectedReplies.Remove(message.TransactionGroupId);
+                    Self.Tell(new GroupFinishedMessage(message.TransactionGroupId, transactionGroup), ActorRefs.NoSender);
+                }
+                return true;
+            }
+            else
+            {
+                if (expectedReplies.TryGetValue(message.TransactionGroupId, out Dictionary<Guid, IMessage> transactionGroup))
+                {
+                    if (transactionGroup.ContainsKey(message.TransactionId))
+                    {
+                        transactionGroup[message.TransactionId] = message;
+                    }
+                    if (transactionGroup.Values.All(m => m != null))
+                    {
+                        expectedReplies.Remove(message.TransactionGroupId);
+                        if (transactionGroup.Count == 1)
+                        {
+                            //Why send another message ?
+                            return false;
+                        }
+                        else
+                        {
+                            Self.Tell(new GroupFinishedMessage(message.TransactionGroupId, transactionGroup), ActorRefs.NoSender);
+                        }
+                    }
+                }
+                return true;
+            }
+        }
+
         /// <summary>
         /// Handle incoming Workflow Messages
         /// </summary>
         /// <param name="message"></param>
-        protected abstract void WorkflowMessageHandler(WorkflowMessage message);
+        protected abstract void WorkflowMessageHandler(IWorkflowMessage message);
 
         #endregion
 
@@ -211,6 +275,68 @@ namespace DevelApp.Workflow.Core.AbstractActors
             }
         }
 
+        /// <summary>
+        /// Tell and expect a reply sometime in the future. A variation of the ask
+        /// </summary>
+        /// <param name="transactionGroupId"></param>
+        /// <param name="recipient"></param>
+        /// <param name="message"></param>
+        protected void TellWithReply(Guid transactionGroupId, IActorRef recipient, IMessage message)
+        {
+            TellGroupWithReply(transactionGroupId, new List<(IActorRef recipient, IMessage message)>() { (recipient, message) });
+        }
+
+        /// <summary>
+        /// Tell and expect a consolidated reply with all messages
+        /// </summary>
+        /// <param name="transactionGroupId"></param>
+        /// <param name="recipientList"></param>
+        protected void TellGroupWithReply(Guid transactionGroupId, List<(IActorRef recipient, IMessage message)> recipientList)
+        {
+            Dictionary<Guid, IMessage> group = new Dictionary<Guid, IMessage>();
+            foreach((IActorRef recipient, IMessage message) tuple in recipientList)
+            {
+                group.Add(tuple.message.TransactionId, null);
+            }
+            expectedReplies.Add(transactionGroupId, group);
+            foreach ((IActorRef recipient, IMessage message) tuple in recipientList)
+            {
+                tuple.recipient.Tell(tuple.message);
+            }
+        }
+
+        /// <summary>
+        /// Tell and expect a reply sometime in the future. Will timeout and ignore messages received too late
+        /// </summary>
+        /// <param name="transactionGroupId"></param>
+        /// <param name="timeout"></param>
+        /// <param name="recipient"></param>
+        /// <param name="message"></param>
+        protected void TellWithReplyAndTimeout(Guid transactionGroupId, TimeSpan timeout, IActorRef recipient, IMessage message)
+        {
+            TellGroupWithReplyAndTimeout(transactionGroupId, timeout, new List<(IActorRef recipient, IMessage message)>() { (recipient, message) });
+        }
+
+        /// <summary>
+        /// Tell and expect a consolidated reply with all messages. Will timeout and ignore messages received too late
+        /// </summary>
+        /// <param name="transactionGroupId"></param>
+        /// <param name="timeout"></param>
+        /// <param name="recipientList"></param>
+        protected void TellGroupWithReplyAndTimeout(Guid transactionGroupId, TimeSpan timeout, List<(IActorRef recipient, IMessage message)> recipientList)
+        {
+            Dictionary<Guid, IMessage> group = new Dictionary<Guid, IMessage>();
+            foreach ((IActorRef recipient, IMessage message) tuple in recipientList)
+            {
+                group.Add(tuple.message.TransactionId, null);
+            }
+            expectedReplies.Add(transactionGroupId, group);
+            foreach ((IActorRef recipient, IMessage message) tuple in recipientList)
+            {
+                tuple.recipient.Tell(tuple.message);
+            }
+            Context.System.Scheduler.ScheduleTellOnce(timeout, Self, new GroupTimedOutMessage(transactionGroupId), Self);
+        }
 
         /// <summary>
         /// Used for recovering from crash

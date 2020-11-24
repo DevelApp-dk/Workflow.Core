@@ -27,6 +27,9 @@ namespace DevelApp.Workflow.Core.Model
             _innerJsonValue = jsonValue;
         }
 
+        /// <summary>
+        /// Returns the inner 
+        /// </summary>
         public JsonValue JsonValue
         {
             get
@@ -38,6 +41,15 @@ namespace DevelApp.Workflow.Core.Model
         public override string ToString()
         {
             return _innerJsonValue.ToString();
+        }
+
+        /// <summary>
+        /// Returns a nicely indented string
+        /// </summary>
+        /// <returns></returns>
+        public string ToIndentedString()
+        {
+            return _innerJsonValue.GetIndentedString();
         }
 
         #region Implicit operators
