@@ -19,6 +19,11 @@ namespace DevelApp.Workflow.Core.Model
             _innerKeyString = keyString;
         }
 
+        public KeyString Clone()
+        {
+            return new KeyString(_innerKeyString);
+        }
+
         public override string ToString()
         {
             return _innerKeyString;
