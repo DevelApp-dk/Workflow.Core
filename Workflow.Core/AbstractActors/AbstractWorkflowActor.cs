@@ -30,26 +30,66 @@ namespace DevelApp.Workflow.Core.AbstractActors
             });
         }
 
+        #region Actor Idenitifaction
+
+        private string _actorId;
+
         /// <summary>
         /// Returns the unique actor id
         /// </summary>
-        protected virtual string ActorId
+        public virtual string ActorId
         {
             get
             {
-                return GetType().Name.Replace("Actor", "") + $"_{ActorVersion}_{ActorInstance}";
+                if(string.IsNullOrWhiteSpace(_actorId))
+                {
+                    _actorId = $"{ActorName}_{ActorVersion}_{ActorInstance}";
+                }
+
+                return _actorId;
+            }
+        }
+
+        private string _actorName;
+
+        /// <summary>
+        /// ActorName is typically the Key for the actor. Override if not classname without Actor
+        /// </summary>
+        public virtual KeyString ActorName
+        {
+            get
+            {
+                if (string.IsNullOrWhiteSpace(_actorName))
+                {
+                    _actorName =  GetType().Name.Replace("Actor", "");
+                }
+                return _actorName;
+            }
+        }
+
+        private SemanticVersionNumber _semanticVersionNumber;
+
+        /// <summary>
+        /// Returns the actor version based on the assembly version
+        /// </summary>
+        public SemanticVersionNumber ActorVersion 
+        { 
+            get
+            {
+                if(_semanticVersionNumber == null)
+                {
+                    _semanticVersionNumber = GetType().Assembly.GetName().Version;
+                }
+                return _semanticVersionNumber;
             }
         }
 
         /// <summary>
-        /// Returns the actor version in positive number
-        /// </summary>
-        protected abstract VersionNumber ActorVersion { get; }
-
-        /// <summary>
         /// Returns the actor instance
         /// </summary>
-        protected int ActorInstance { get; }
+        public int ActorInstance { get; }
+
+        #endregion
 
         /// <summary>
         /// Increment Monitoring Actor Created
