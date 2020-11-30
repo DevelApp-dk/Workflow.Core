@@ -101,29 +101,27 @@ namespace DevelApp.Workflow.Core.AbstractActors
         /// <param name="message"></param>
         protected abstract void GroupFinishedMessageHandler(GroupFinishedMessage message);
 
+        #region Actor Idenitifaction
+
+        private string _actorId;
+
         /// <summary>
         /// Returns the unique actor id
         /// </summary>
-        protected virtual string ActorId
+        public virtual string ActorId
         {
             get
             {
-                return BuildInstanceName(ActorName, ActorVersion, ActorInstance);
+                if (string.IsNullOrWhiteSpace(_actorId))
+                {
+                    _actorId = $"{ActorName}_{ActorVersion}_{ActorInstance}";
+                }
+
+                return _actorId;
             }
         }
 
-        /// <summary>
-        /// Returns Unique actor instance name
-        /// </summary>
-        /// <param name="actorName"></param>
-        /// <param name="actorVersion"></param>
-        /// <param name="actorInstance"></param>
-        /// <returns></returns>
-        protected string BuildInstanceName(KeyString actorName, VersionNumber actorVersion, int actorInstance = 1)
-        {
-            return $"{actorName}_{actorVersion}_{actorInstance}";
-        }
-
+        private string _actorName;
 
         /// <summary>
         /// ActorName is typically the Key for the actor. Override if not classname without Actor
@@ -132,18 +130,38 @@ namespace DevelApp.Workflow.Core.AbstractActors
         {
             get
             {
-                return GetType().Name.Replace("Actor", "");
+                if (string.IsNullOrWhiteSpace(_actorName))
+                {
+                    _actorName = GetType().Name.Replace("Actor", "");
+                }
+                return _actorName;
             }
         }
 
+        private SemanticVersionNumber _semanticVersionNumber;
 
         /// <summary>
-        /// Returns the actor version in positive number
+        /// Returns the actor version based on the assembly version
         /// </summary>
-        protected abstract VersionNumber ActorVersion { get; }
+        public SemanticVersionNumber ActorVersion
+        {
+            get
+            {
+                if (_semanticVersionNumber == null)
+                {
+                    _semanticVersionNumber = GetType().Assembly.GetName().Version;
+                }
+                return _semanticVersionNumber;
+            }
+        }
 
         /// <summary>
-        /// Returns the persistant name as default. Override on 
+        /// Returns the actor instance
+        /// </summary>
+        public int ActorInstance { get; }
+
+        /// <summary>
+        /// Returns the persistant name as default. Override on specific needs
         /// </summary>
         public override string PersistenceId
         {
@@ -153,10 +171,7 @@ namespace DevelApp.Workflow.Core.AbstractActors
             }
         }
 
-        /// <summary>
-        /// Returns the actor instance
-        /// </summary>
-        protected int ActorInstance { get; }
+        #endregion
 
         #region Message handling
 

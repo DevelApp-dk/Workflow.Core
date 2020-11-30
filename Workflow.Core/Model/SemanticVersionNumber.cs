@@ -11,11 +11,11 @@ namespace DevelApp.Workflow.Core.Model
     /// Minor: when you add functionality in a backwards compatible manner
     /// Patch: when you make backwards compatible bug fixes
     /// </summary>
-    public sealed class SemanticVersionString
+    public sealed class SemanticVersionNumber
     {
-        private int _major;
-        private int _minor;
-        private int _patch;
+        public int Major { get; }
+        public int Minor { get; }
+        public int Patch { get; }
 
         /// <summary>
         /// 
@@ -23,26 +23,26 @@ namespace DevelApp.Workflow.Core.Model
         /// <param name="major"></param>
         /// <param name="minor"></param>
         /// <param name="patch"></param>
-        public SemanticVersionString(int major, int minor, int patch)
+        public SemanticVersionNumber(int major, int minor, int patch)
         {
             if(major < 0 || minor < 0 || patch < 0)
             {
                 throw new SemanticVersionStringException($"A version number is below 0: {major}.{minor}.{patch}");
             }
 
-            _major = major;
-            _minor = minor;
-            _patch = patch;
+            Major = major;
+            Minor = minor;
+            Patch = patch;
         }
 
         public override string ToString()
         {
-            return $"{_major}.{_minor}.{_patch}";
+            return $"{Major}.{Minor}.{Patch}";
         }
 
         #region Implicit operators
 
-        public static implicit operator SemanticVersionString(string rhs)
+        public static implicit operator SemanticVersionNumber(string rhs)
         {
             string[] parts = rhs.Split('.');
             if(parts.Length != 3)
@@ -66,12 +66,22 @@ namespace DevelApp.Workflow.Core.Model
                 throw new SemanticVersionStringException($"Versioning is not valid format for patch :{parts[2]}");
             }
 
-            return new SemanticVersionString(major, minor, patch);
+            return new SemanticVersionNumber(major, minor, patch);
         }
 
-        public static implicit operator string(SemanticVersionString rhs)
+        public static implicit operator string(SemanticVersionNumber rhs)
         {
             return rhs.ToString();
+        }
+
+        public static implicit operator Version(SemanticVersionNumber rhs)
+        {
+            return new Version(rhs.Major, rhs.Minor, rhs.Patch);
+        }
+
+        public static implicit operator SemanticVersionNumber(Version rhs)
+        {
+            return new SemanticVersionNumber(rhs.Major, rhs.Minor, rhs.Build);
         }
 
         #endregion
