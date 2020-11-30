@@ -52,6 +52,11 @@ namespace DevelApp.Workflow.Core.Model
             return _innerJsonValue.GetIndentedString();
         }
 
+        public JsonDataString Clone()
+        {
+            return new JsonDataString(this.ToString());
+        }
+
         #region Implicit operators
 
         public static implicit operator JsonDataString(string rhs)

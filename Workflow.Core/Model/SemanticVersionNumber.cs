@@ -40,6 +40,11 @@ namespace DevelApp.Workflow.Core.Model
             return $"{Major}.{Minor}.{Patch}";
         }
 
+        public SemanticVersionNumber Clone()
+        {
+            return new SemanticVersionNumber(Major, Minor, Patch);
+        }
+
         #region Implicit operators
 
         public static implicit operator SemanticVersionNumber(string rhs)
