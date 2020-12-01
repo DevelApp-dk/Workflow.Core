@@ -175,7 +175,7 @@ namespace DevelApp.Workflow.Core.AbstractActors
 
         #region Message handling
 
-        Dictionary<Guid, Dictionary<Guid, IMessage>> expectedReplies = new Dictionary<Guid, Dictionary<Guid, IMessage>>();
+        Dictionary<TransactionGroupId, Dictionary<TransactionId, IMessage>> expectedReplies = new Dictionary<TransactionGroupId, Dictionary<TransactionId, IMessage>>();
 
         /// <summary>
         /// Handles reply messages
@@ -186,7 +186,7 @@ namespace DevelApp.Workflow.Core.AbstractActors
         {
             if (message.IsTimeout)
             {
-                if (expectedReplies.TryGetValue(message.TransactionGroupId, out Dictionary<Guid, IMessage> transactionGroup))
+                if (expectedReplies.TryGetValue(message.TransactionGroupId, out Dictionary<TransactionId, IMessage> transactionGroup))
                 {
                     expectedReplies.Remove(message.TransactionGroupId);
                     Self.Tell(new GroupFinishedMessage(message.TransactionGroupId, transactionGroup), ActorRefs.NoSender);
@@ -195,7 +195,7 @@ namespace DevelApp.Workflow.Core.AbstractActors
             }
             else
             {
-                if (expectedReplies.TryGetValue(message.TransactionGroupId, out Dictionary<Guid, IMessage> transactionGroup))
+                if (expectedReplies.TryGetValue(message.TransactionGroupId, out Dictionary<TransactionId, IMessage> transactionGroup))
                 {
                     if (transactionGroup.ContainsKey(message.TransactionId))
                     {
@@ -296,7 +296,7 @@ namespace DevelApp.Workflow.Core.AbstractActors
         /// <param name="transactionGroupId"></param>
         /// <param name="recipient"></param>
         /// <param name="message"></param>
-        protected void TellWithReply(Guid transactionGroupId, IActorRef recipient, IMessage message)
+        protected void TellWithReply(TransactionGroupId transactionGroupId, IActorRef recipient, IMessage message)
         {
             TellGroupWithReply(transactionGroupId, new List<(IActorRef recipient, IMessage message)>() { (recipient, message) });
         }
@@ -306,9 +306,9 @@ namespace DevelApp.Workflow.Core.AbstractActors
         /// </summary>
         /// <param name="transactionGroupId"></param>
         /// <param name="recipientList"></param>
-        protected void TellGroupWithReply(Guid transactionGroupId, List<(IActorRef recipient, IMessage message)> recipientList)
+        protected void TellGroupWithReply(TransactionGroupId transactionGroupId, List<(IActorRef recipient, IMessage message)> recipientList)
         {
-            Dictionary<Guid, IMessage> group = new Dictionary<Guid, IMessage>();
+            Dictionary<TransactionId, IMessage> group = new Dictionary<TransactionId, IMessage>();
             foreach((IActorRef recipient, IMessage message) tuple in recipientList)
             {
                 group.Add(tuple.message.TransactionId, null);
@@ -327,7 +327,7 @@ namespace DevelApp.Workflow.Core.AbstractActors
         /// <param name="timeout"></param>
         /// <param name="recipient"></param>
         /// <param name="message"></param>
-        protected void TellWithReplyAndTimeout(Guid transactionGroupId, TimeSpan timeout, IActorRef recipient, IMessage message)
+        protected void TellWithReplyAndTimeout(TransactionGroupId transactionGroupId, TimeSpan timeout, IActorRef recipient, IMessage message)
         {
             TellGroupWithReplyAndTimeout(transactionGroupId, timeout, new List<(IActorRef recipient, IMessage message)>() { (recipient, message) });
         }
@@ -338,9 +338,9 @@ namespace DevelApp.Workflow.Core.AbstractActors
         /// <param name="transactionGroupId"></param>
         /// <param name="timeout"></param>
         /// <param name="recipientList"></param>
-        protected void TellGroupWithReplyAndTimeout(Guid transactionGroupId, TimeSpan timeout, List<(IActorRef recipient, IMessage message)> recipientList)
+        protected void TellGroupWithReplyAndTimeout(TransactionGroupId transactionGroupId, TimeSpan timeout, List<(IActorRef recipient, IMessage message)> recipientList)
         {
-            Dictionary<Guid, IMessage> group = new Dictionary<Guid, IMessage>();
+            Dictionary<TransactionId, IMessage> group = new Dictionary<TransactionId, IMessage>();
             foreach ((IActorRef recipient, IMessage message) tuple in recipientList)
             {
                 group.Add(tuple.message.TransactionId, null);
