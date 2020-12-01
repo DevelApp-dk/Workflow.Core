@@ -1,4 +1,6 @@
-﻿using System;
+﻿using Akka.Actor;
+using DevelApp.Workflow.Core.Model;
+using System;
 using System.Collections.Generic;
 using System.Text;
 
@@ -12,7 +14,7 @@ namespace DevelApp.Workflow.Core
         /// <summary>
         /// The transaction id of the message unique for the interaction
         /// </summary>
-        Guid TransactionId { get; }
+        TransactionId TransactionId { get; }
 
         /// <summary>
         /// Time of message creation in UTC time
@@ -22,7 +24,7 @@ namespace DevelApp.Workflow.Core
         /// <summary>
         /// The transaction group id of the message
         /// </summary>
-        Guid TransactionGroupId { get; }
+        TransactionGroupId TransactionGroupId { get; }
 
         /// <summary>
         /// Is the message a reply
@@ -33,5 +35,10 @@ namespace DevelApp.Workflow.Core
         /// Is the message a timeout
         /// </summary>
         bool IsTimeout { get; }
+
+        /// <summary>
+        /// Can contain the expected replyTo of the message if a reply is expected
+        /// </summary>
+        ActorPath ReplyTo { get; }
     }
 }

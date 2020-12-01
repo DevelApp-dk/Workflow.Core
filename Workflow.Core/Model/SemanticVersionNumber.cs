@@ -11,7 +11,7 @@ namespace DevelApp.Workflow.Core.Model
     /// Minor: when you add functionality in a backwards compatible manner
     /// Patch: when you make backwards compatible bug fixes
     /// </summary>
-    public sealed class SemanticVersionNumber
+    public sealed class SemanticVersionNumber: IEquatable<SemanticVersionNumber>, IComparable<SemanticVersionNumber>
     {
         public int Major { get; }
         public int Minor { get; }
@@ -43,6 +43,35 @@ namespace DevelApp.Workflow.Core.Model
         public SemanticVersionNumber Clone()
         {
             return new SemanticVersionNumber(Major, Minor, Patch);
+        }
+
+        public bool Equals(SemanticVersionNumber other)
+        {
+            if(Major == other.Major && Minor == other.Minor && Patch == other.Patch)
+            {
+                return true;
+            }
+            else
+            {
+                return false;
+            }
+        }
+
+        public int CompareTo(SemanticVersionNumber other)
+        {
+            if (Major != other.Major)
+            {
+                return Math.Sign(Major - other.Major);
+            }
+            if (Minor != other.Minor)
+            {
+                return Math.Sign(Minor - other.Minor);
+            }
+            if (Patch != other.Patch)
+            {
+                return Math.Sign(Patch - other.Patch);
+            }
+            return 0;
         }
 
         #region Implicit operators

@@ -43,12 +43,12 @@ namespace DevelApp.Workflow.Core.Messages
         /// <summary>
         /// The transaction id of the message unique for the interaction
         /// </summary>
-        public Guid TransactionId { get; }
+        public TransactionId TransactionId { get; }
 
         /// <summary>
         /// The transaction group id of the message
         /// </summary>
-        public Guid TransactionGroupId { get; }
+        public TransactionGroupId TransactionGroupId { get; }
 
         /// <summary>
         /// MessageTypeName is used to distinguish what the message is about
@@ -142,12 +142,12 @@ namespace DevelApp.Workflow.Core.Messages
         /// <summary>
         /// The transaction id of the message unique for the interaction
         /// </summary>
-        public Guid TransactionId { get; }
+        public TransactionId TransactionId { get; }
 
         /// <summary>
         /// The transaction group id of the message
         /// </summary>
-        public Guid TransactionGroupId { get; }
+        public TransactionGroupId TransactionGroupId { get; }
 
         /// <summary>
         /// The reported error message if reported
@@ -183,6 +183,11 @@ namespace DevelApp.Workflow.Core.Messages
         /// Can contain the reporting actor of the error
         /// </summary>
         public ActorPath ReportingActor { get; }
+
+        /// <summary>
+        /// Can contain the expected replyTo of the message if a reply is expected
+        /// </summary>
+        public ActorPath ReplyTo { get { return null; } }
 
         /// <summary>
         /// Is the message a reply
@@ -229,12 +234,12 @@ namespace DevelApp.Workflow.Core.Messages
         /// <summary>
         /// The transaction id of the message unique for the interaction
         /// </summary>
-        public Guid TransactionId { get; }
+        public TransactionId TransactionId { get; }
 
         /// <summary>
         /// The transaction group id of the message
         /// </summary>
-        public Guid TransactionGroupId { get; }
+        public TransactionGroupId TransactionGroupId { get; }
 
         /// <summary>
         /// MessageTypeName is used to distinguish what the message is about
@@ -255,6 +260,11 @@ namespace DevelApp.Workflow.Core.Messages
         /// Can contain the replying actor
         /// </summary>
         public ActorPath ReplyingReceiver { get; }
+
+        /// <summary>
+        /// Can contain the expected replyTo of the message if a reply is expected
+        /// </summary>
+        public ActorPath ReplyTo { get { return null; } }
 
         /// <summary>
         /// Is the message a reply
@@ -303,12 +313,12 @@ namespace DevelApp.Workflow.Core.Messages
         /// <summary>
         /// The transaction id of the message unique for the interaction
         /// </summary>
-        public Guid TransactionId { get; }
+        public TransactionId TransactionId { get; }
 
         /// <summary>
         /// The transaction group id of the message
         /// </summary>
-        public Guid TransactionGroupId { get; }
+        public TransactionGroupId TransactionGroupId { get; }
 
         /// <summary>
         /// MessageTypeName is used to distinguish what the message is about
@@ -339,6 +349,11 @@ namespace DevelApp.Workflow.Core.Messages
         /// Explanation of why this was unhandled
         /// </summary>
         public string UnhandledExplanation { get; }
+
+        /// <summary>
+        /// Can contain the expected replyTo of the message if a reply is expected
+        /// </summary>
+        public ActorPath ReplyTo { get { return null; } }
 
         /// <summary>
         /// Is the message a reply
