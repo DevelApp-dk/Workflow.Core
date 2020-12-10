@@ -1,4 +1,5 @@
 ﻿using DevelApp.RuntimePluggableClassFactory.Interface;
+using DevelApp.Utility.Model;
 using DevelApp.Workflow.Core.Messages;
 using DevelApp.Workflow.Core.Model;
 using Manatee.Json;

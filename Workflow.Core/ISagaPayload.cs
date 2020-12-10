@@ -1,4 +1,5 @@
-﻿using DevelApp.Workflow.Core.Model;
+﻿using DevelApp.Utility.Model;
+using DevelApp.Workflow.Core.Model;
 using Manatee.Json;
 using System;
 using System.Collections.Generic;
