@@ -5,6 +5,7 @@ using Akka.Actor;
 using Akka.Event;
 using Akka.Monitoring;
 using Akka.Pattern;
+using DevelApp.Utility.Model;
 using DevelApp.Workflow.Core.Messages;
 using DevelApp.Workflow.Core.Model;
 

@@ -19,24 +19,6 @@ namespace Worflow.Core_UnitTest
         }
 
         [Fact]
-        public void KeyString_ImplicitConversion()
-        {
-            KeyString keyString = Guid.NewGuid().ToString();
-
-            string output = keyString;
-        }
-
-        [Fact]
-        public void SemanticVersionNumber_ImplicitConversion()
-        {
-            SemanticVersionNumber semanticVersionNumber = "2.3.4";
-            SemanticVersionNumber semanticVersionNumber2 = new Version(1,2,3);
-
-            string output = semanticVersionNumber;
-            Version outputVersion = semanticVersionNumber2;
-        }
-
-        [Fact]
         public void TransactionGroupId_ImplicitConversion()
         {
             TransactionGroupId transactionGroupId = Guid.NewGuid();
