@@ -3,7 +3,7 @@
   <PropertyGroup>
     <TargetFramework>netstandard2.0</TargetFramework>
     <RepositoryUrl>https://github.com/DevelApp-dk/Workflow.Core</RepositoryUrl>
-    <Version>1.1.8</Version>
+    <Version>1.1.9</Version>
     <Copyright>Copyright © DevelApp 2020</Copyright>
     <PackageLicenseFile>LICENSE</PackageLicenseFile>
     <Company>DevelApp Denmark (CVR 33211740)</Company>
