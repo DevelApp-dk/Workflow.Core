@@ -28,7 +28,7 @@ namespace DevelApp.Workflow.Core.AbstractBehaviors
         /// <summary>
         /// Returns the specific name of the sagastep behavior without Behavior or SagaStepBehavior as they are implied
         /// </summary>
-        public string LocalName
+        public IdentifierString Name
         {
             get
             {
@@ -36,19 +36,14 @@ namespace DevelApp.Workflow.Core.AbstractBehaviors
             }
         }
 
-        /// <summary>
-        /// Returns the qualified name without version number
-        /// </summary>
-        public string Name
+        public NamespaceString Module
         {
             get
             {
-                return string.Format("{0}{1}.{2}"
-                    , ModuleKey
-                    , string.IsNullOrWhiteSpace(WorkflowKey) ? "" : "." + WorkflowKey
-                    , LocalName);
+                return ModuleKey + (string.IsNullOrWhiteSpace(WorkflowKey) ? "" : "." + WorkflowKey);
             }
         }
+
 
         /// <summary>
         /// Description of the sagastep behavior
@@ -58,7 +53,7 @@ namespace DevelApp.Workflow.Core.AbstractBehaviors
         /// <summary>
         /// Returns the version number of the sagastep behavior
         /// </summary>
-        public abstract int Version { get; }
+        public abstract SemanticVersionNumber Version { get; }
 
         /// <summary>
         /// Returns the JsonSchema for the configuration
