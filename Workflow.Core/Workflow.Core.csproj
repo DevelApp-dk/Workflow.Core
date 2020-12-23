@@ -3,7 +3,7 @@
   <PropertyGroup>
     <TargetFramework>netstandard2.0</TargetFramework>
     <RepositoryUrl>https://github.com/DevelApp-dk/Workflow.Core</RepositoryUrl>
-    <Version>1.1.9</Version>
+    <Version>1.1.10</Version>
     <Copyright>Copyright © DevelApp 2020</Copyright>
     <PackageLicenseFile>LICENSE</PackageLicenseFile>
     <Company>DevelApp Denmark (CVR 33211740)</Company>
@@ -21,6 +21,7 @@
   <ItemGroup>
     <PackageReference Include="Akka" Version="1.4.10" />
     <PackageReference Include="akka.monitoring" Version="1.1.0" />
+    <PackageReference Include="DevelApp.JsonSchemaBuilder" Version="1.0.21" />
     <PackageReference Include="DevelApp.RuntimePluggableClassFactory.Interface" Version="1.0.4" />
     <PackageReference Include="DevelApp.Utility" Version="1.0.7" />
     <PackageReference Include="Manatee.Json" Version="13.0.3" />

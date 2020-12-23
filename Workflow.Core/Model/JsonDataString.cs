@@ -91,6 +91,11 @@ namespace DevelApp.Workflow.Core.Model
             return _innerJsonValue.Equals(other.JsonValue);
         }
 
+        public override int GetHashCode()
+        {
+            return -1468169951 + EqualityComparer<JsonValue>.Default.GetHashCode(_innerJsonValue);
+        }
+
         #region Implicit operators
 
         public static implicit operator JsonDataString(string rhs)
