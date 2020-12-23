@@ -1,11 +1,7 @@
 ﻿using DevelApp.RuntimePluggableClassFactory.Interface;
 using DevelApp.Utility.Model;
 using DevelApp.Workflow.Core.Messages;
-using DevelApp.Workflow.Core.Model;
 using Manatee.Json;
-using System;
-using System.Collections.Generic;
-using System.Text;
 
 namespace DevelApp.Workflow.Core
 {
@@ -42,5 +38,10 @@ namespace DevelApp.Workflow.Core
         /// ModuleKey for the owning workflow if any
         /// </summary>
         KeyString WorkflowKey { get; }
+
+        /// <summary>
+        /// Returns the name of this behavior
+        /// </summary>
+        KeyString BehaviorKey { get; }
     }
 }

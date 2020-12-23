@@ -1,9 +1,5 @@
 ﻿using DevelApp.Utility.Model;
-using DevelApp.Workflow.Core.Model;
 using Manatee.Json;
-using System;
-using System.Collections.Generic;
-using System.Text;
 
 namespace DevelApp.Workflow.Core
 {
@@ -12,8 +8,11 @@ namespace DevelApp.Workflow.Core
         /// <summary>
         /// Returns an instance of the behavior
         /// </summary>
+        /// <param name="moduleName"></param>
         /// <param name="behaviorName"></param>
+        /// <param name="version"></param>
+        /// <param name="behaviorConfiguration"></param>
         /// <returns></returns>
-        ISagaStepBehavior GetSagaStepBehavior(KeyString behaviorName, SemanticVersionNumber version, JsonValue behaviorConfiguration);
+        ISagaStepBehavior GetSagaStepBehavior(KeyString moduleName, KeyString behaviorName, SemanticVersionNumber version, JsonValue behaviorConfiguration, KeyString workflowName = null);
     }
 }

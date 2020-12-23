@@ -21,9 +21,20 @@ namespace DevelApp.Workflow.Core.AbstractBehaviors
         public abstract KeyString ModuleKey { get; }
 
         /// <summary>
-        /// ModuleKey for the owning workflow if any
+        /// WorkflowKey for the owning workflow if any
         /// </summary>
         public abstract KeyString WorkflowKey { get; }
+
+        /// <summary>
+        /// ModuleKey for the owning workflow if any
+        /// </summary>
+        public KeyString BehaviorKey 
+        { 
+            get
+            {
+                return Name.ToString();
+            }
+        }
 
         /// <summary>
         /// Returns the specific name of the sagastep behavior without Behavior or SagaStepBehavior as they are implied
